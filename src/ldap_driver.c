@@ -28,6 +28,7 @@
 #include <dns/rdatasetiter.h>
 #include <dns/rdatatype.h>
 #include <dns/result.h>
+#include <dns/rpz.h>
 #include <dns/soa.h>
 #include <dns/types.h>
 
@@ -322,7 +323,7 @@ closeversion(dns_db_t *db, dns_dbversion_t **versionp, isc_boolean_t commit)
 }
 
 static isc_result_t
-findnode(dns_db_t *db, dns_name_t *name, isc_boolean_t create,
+findnode(dns_db_t *db, const dns_name_t *name, isc_boolean_t create,
 	 dns_dbnode_t **nodep)
 {
 	ldapdb_t *ldapdb = (ldapdb_t *) db;
@@ -333,7 +334,7 @@ findnode(dns_db_t *db, dns_name_t *name, isc_boolean_t create,
 }
 
 static isc_result_t
-find(dns_db_t *db, dns_name_t *name, dns_dbversion_t *version,
+find(dns_db_t *db, const dns_name_t *name, dns_dbversion_t *version,
      dns_rdatatype_t type, unsigned int options, isc_stdtime_t now,
      dns_dbnode_t **nodep, dns_name_t *foundname, dns_rdataset_t *rdataset,
      dns_rdataset_t *sigrdataset)
@@ -347,7 +348,7 @@ find(dns_db_t *db, dns_name_t *name, dns_dbversion_t *version,
 }
 
 static isc_result_t
-findzonecut(dns_db_t *db, dns_name_t *name, unsigned int options,
+findzonecut(dns_db_t *db, const dns_name_t *name, unsigned int options,
 	    isc_stdtime_t now, dns_dbnode_t **nodep, dns_name_t *foundname,
 	    dns_rdataset_t *rdataset, dns_rdataset_t *sigrdataset)
 {
@@ -683,7 +684,7 @@ getnsec3parameters(dns_db_t *db, dns_dbversion_t *version,
 }
 
 static isc_result_t
-findnsec3node(dns_db_t *db, dns_name_t *name, isc_boolean_t create,
+findnsec3node(dns_db_t *db, const dns_name_t *name, isc_boolean_t create,
 	      dns_dbnode_t **nodep)
 {
 	ldapdb_t *ldapdb = (ldapdb_t *) db;
@@ -745,27 +746,24 @@ getrrsetstats(dns_db_t *db) {
 }
 
 void
-rpz_attach(dns_db_t *db, dns_rpz_zones_t *rpzs, dns_rpz_num_t rpz_num)
+rpz_attach(dns_db_t *db, void *rpzs, dns_rpz_num_t rpz_num)
 {
 	ldapdb_t *ldapdb = (ldapdb_t *) db;
+	dns_rpz_zones_t *ldaprpzs = (dns_rpz_zones_t *)  rpzs;
 
 	REQUIRE(VALID_LDAPDB(ldapdb));
 
-	dns_db_rpz_attach(ldapdb->rbtdb, rpzs, rpz_num);
-}
+	isc_result_t result;
 
-isc_result_t
-rpz_ready(dns_db_t *db)
-{
-	ldapdb_t *ldapdb = (ldapdb_t *) db;
-
-	REQUIRE(VALID_LDAPDB(ldapdb));
-
-	return dns_db_rpz_ready(ldapdb->rbtdb);
+	ldaprpzs->zones[rpz_num]->db_registered = ISC_TRUE;
+        result = dns_db_updatenotify_register(db,
+                                              dns_rpz_dbupdate_callback,
+                                              ldaprpzs->zones[rpz_num]);
+        REQUIRE(result == ISC_R_SUCCESS);
 }
 
 static isc_result_t
-findnodeext(dns_db_t *db, dns_name_t *name,
+findnodeext(dns_db_t *db, const dns_name_t *name,
 		   isc_boolean_t create, dns_clientinfomethods_t *methods,
 		   dns_clientinfo_t *clientinfo, dns_dbnode_t **nodep)
 {
@@ -778,7 +776,7 @@ findnodeext(dns_db_t *db, dns_name_t *name,
 }
 
 static isc_result_t
-findext(dns_db_t *db, dns_name_t *name, dns_dbversion_t *version,
+findext(dns_db_t *db, const dns_name_t *name, dns_dbversion_t *version,
 	       dns_rdatatype_t type, unsigned int options, isc_stdtime_t now,
 	       dns_dbnode_t **nodep, dns_name_t *foundname,
 	       dns_clientinfomethods_t *methods, dns_clientinfo_t *clientinfo,
@@ -862,13 +860,17 @@ static dns_dbmethods_t ldapdb_methods = {
 	isdnssec,
 	getrrsetstats,
 	rpz_attach,
-	rpz_ready,
+	NULL,           /* rpz_ready */
 	findnodeext,
 	findext,
 	setcachestats,
 	hashsize,
 	nodefullname,
-	NULL, // getsize method not implemented (related BZ1353563)
+	NULL,           // getsize method not implemented (related BZ1353563)
+	NULL,           /* getsize */
+	NULL,           /* setservestalettl */
+	NULL,           /* getservestalettl */
+	//NULL            /* setgluecachestats */
 };
 
 isc_result_t ATTR_NONNULLS
@@ -918,7 +920,7 @@ dns_ns_buildrdata(dns_name_t *origin, dns_name_t *ns_name,
  * @param[in] argv [0] is database instance name
  */
 isc_result_t
-ldapdb_associate(isc_mem_t *mctx, dns_name_t *name, dns_dbtype_t type,
+ldapdb_associate(isc_mem_t *mctx, const dns_name_t *name, dns_dbtype_t type,
 		 dns_rdataclass_t rdclass, unsigned int argc, char *argv[],
 		 void *driverarg, dns_db_t **dbp) {
 
@@ -945,7 +947,7 @@ cleanup:
 }
 
 isc_result_t
-ldapdb_create(isc_mem_t *mctx, dns_name_t *name, dns_dbtype_t type,
+ldapdb_create(isc_mem_t *mctx, const dns_name_t *name, dns_dbtype_t type,
 	      dns_rdataclass_t rdclass, void *driverarg, dns_db_t **dbp)
 {
 	ldapdb_t *ldapdb = NULL;

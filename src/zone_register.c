@@ -84,7 +84,7 @@ static const setting_t zone_settings[] = {
 
 isc_result_t
 zr_rbt_iter_init(zone_register_t *zr, rbt_iterator_t **iter,
-		 dns_name_t *nodename) {
+		 const dns_name_t *nodename) {
 	if (zr->rbt == NULL)
 		return ISC_R_NOTFOUND;
 
@@ -205,7 +205,7 @@ zr_destroy(zone_register_t **zrp)
  */
 isc_result_t
 zr_get_zone_path(isc_mem_t *mctx, settings_set_t *settings,
-		 dns_name_t *zone_name, const char *last_component,
+		 const dns_name_t *zone_name, const char *last_component,
 		 ld_string_t **path) {
 	const char *inst_dir = NULL;
 	ld_string_t *zone_path = NULL;
@@ -342,7 +342,7 @@ delete_zone_info(void *arg1, void *arg2)
  * @pre Zone registed is locked.
  */
 static isc_result_t
-getzinfo(zone_register_t * const zr, dns_name_t *name, zone_info_t **zinfo) {
+getzinfo(zone_register_t * const zr, const dns_name_t *name, zone_info_t **zinfo) {
 	isc_result_t result;
 	void *data = NULL;
 
@@ -409,7 +409,7 @@ cleanup:
 }
 
 isc_result_t
-zr_del_zone(zone_register_t *zr, dns_name_t *origin)
+zr_del_zone(zone_register_t *zr, const dns_name_t *origin)
 {
 	isc_result_t result;
 
@@ -439,7 +439,7 @@ cleanup:
  * Either ldapdbp or rbtdbp can be NULL.
  */
 isc_result_t
-zr_get_zone_dbs(zone_register_t *zr, dns_name_t *name, dns_db_t **ldapdbp,
+zr_get_zone_dbs(zone_register_t *zr, const dns_name_t *name, dns_db_t **ldapdbp,
 		dns_db_t **rbtdbp)
 {
 	isc_result_t result;
@@ -475,7 +475,7 @@ cleanup:
  * The function returns ISC_R_SUCCESS in case of exact match on zone origin.
  */
 isc_result_t
-zr_get_zone_dn(zone_register_t *zr, dns_name_t *name, const char **dn)
+zr_get_zone_dn(zone_register_t *zr, const dns_name_t *name, const char **dn)
 {
 	isc_result_t result;
 	zone_info_t *zinfo = NULL;
@@ -507,7 +507,7 @@ zr_get_zone_dn(zone_register_t *zr, dns_name_t *name, const char **dn)
  * @remark Caller has to detach zone pointer after use.
  */
 isc_result_t
-zr_get_zone_ptr(zone_register_t * const zr, dns_name_t * const name,
+zr_get_zone_ptr(zone_register_t * const zr, const dns_name_t * const name,
 		dns_zone_t ** const rawp, dns_zone_t ** const securep)
 {
 	isc_result_t result;
@@ -540,7 +540,7 @@ zr_get_zone_ptr(zone_register_t * const zr, dns_name_t * const name,
  * 'set'.
  */
 isc_result_t
-zr_get_zone_settings(zone_register_t *zr, dns_name_t *name, settings_set_t **set)
+zr_get_zone_settings(zone_register_t *zr, const dns_name_t *name, settings_set_t **set)
 {
 	isc_result_t result;
 	zone_info_t *zinfo = NULL;

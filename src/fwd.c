@@ -494,7 +494,7 @@ cleanup:
  */
 isc_result_t
 fwd_configure_zone(const settings_set_t *set, ldap_instance_t *inst,
-		   dns_name_t *name)
+		   const dns_name_t *name)
 {
 	isc_result_t result;
 	isc_mem_t *mctx = NULL;
@@ -607,7 +607,7 @@ cleanup:
 }
 
 isc_result_t
-fwd_delete_table(dns_view_t *view, dns_name_t *name,
+fwd_delete_table(dns_view_t *view, const dns_name_t *name,
 		 const char *msg_obj_type, const char *logname) {
 	isc_result_t result;
 

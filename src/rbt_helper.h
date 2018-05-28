@@ -13,10 +13,10 @@ typedef struct rbt_iterator	rbt_iterator_t;
 
 isc_result_t
 rbt_iter_first(isc_mem_t *mctx, dns_rbt_t *rbt, isc_rwlock_t *rwlock,
-	       rbt_iterator_t **iter, dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
+	       rbt_iterator_t **iter, const dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
 
 isc_result_t
-rbt_iter_next(rbt_iterator_t **iter, dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
+rbt_iter_next(rbt_iterator_t **iter, const dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
 
 void
 rbt_iter_stop(rbt_iterator_t **iter) ATTR_NONNULLS;

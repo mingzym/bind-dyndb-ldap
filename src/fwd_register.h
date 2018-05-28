@@ -37,6 +37,6 @@ fwdr_zone_ispresent(fwd_register_t *fwdr, dns_name_t *name) ATTR_NONNULLS ATTR_C
 
 isc_result_t
 fwdr_rbt_iter_init(fwd_register_t *fwdr, rbt_iterator_t **iter,
-		   dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
+		   const dns_name_t *nodename) ATTR_NONNULLS ATTR_CHECKRESULT;
 
 #endif /* !_LD_FWD_REGISTER_H_ */

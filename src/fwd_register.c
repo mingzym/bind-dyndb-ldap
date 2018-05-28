@@ -4,6 +4,7 @@
 
 #include <isc/rwlock.h>
 #include <dns/name.h>
+#include <isc/util.h>
 
 #include "rbt_helper.h"
 #include "fwd_register.h"
@@ -134,7 +135,7 @@ fwdr_zone_ispresent(fwd_register_t *fwdr, dns_name_t *name) {
 
 isc_result_t
 fwdr_rbt_iter_init(fwd_register_t *fwdr, rbt_iterator_t **iter,
-		   dns_name_t *nodename) {
+		   const dns_name_t *nodename) {
 	if (fwdr->rbt == NULL)
 		return ISC_R_NOTFOUND;
 

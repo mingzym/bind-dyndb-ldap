@@ -3,6 +3,7 @@
  */
 
 #include <dns/rbt.h>
+#include <isc/util.h>
 
 #include "util.h"
 #include "rbt_helper.h"
@@ -35,7 +36,7 @@ struct rbt_iterator {
  *
  */
 static isc_result_t ATTR_NONNULLS ATTR_CHECKRESULT
-rbt_iter_getnodename(rbt_iterator_t *iter, dns_name_t *nodename) {
+rbt_iter_getnodename(rbt_iterator_t *iter, const dns_name_t *nodename) {
 	isc_result_t result;
 	dns_rbtnode_t *node = NULL;
 
@@ -47,7 +48,7 @@ rbt_iter_getnodename(rbt_iterator_t *iter, dns_name_t *nodename) {
 	if (node->data == NULL)
 		return DNS_R_EMPTYNAME;
 
-	CHECK(dns_rbt_fullnamefromnode(node, nodename));
+	CHECK(dns_rbt_fullnamefromnode(node, (dns_name_t *) nodename));
 	result = ISC_R_SUCCESS;
 
 cleanup:
@@ -77,7 +78,7 @@ cleanup:
  */
 isc_result_t
 rbt_iter_first(isc_mem_t *mctx, dns_rbt_t *rbt, isc_rwlock_t *rwlock,
-	       rbt_iterator_t **iterp, dns_name_t *nodename) {
+	       rbt_iterator_t **iterp, const dns_name_t *nodename) {
 
 	isc_result_t result;
 	rbt_iterator_t *iter = NULL;
@@ -133,7 +134,7 @@ cleanup:
  *                       RBT is in unlocked state, iterator is no longer valid.
  */
 isc_result_t
-rbt_iter_next(rbt_iterator_t **iterp, dns_name_t *nodename) {
+rbt_iter_next(rbt_iterator_t **iterp, const dns_name_t *nodename) {
 	isc_result_t result;
 
 	REQUIRE(iterp != NULL && *iterp != NULL);

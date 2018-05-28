@@ -8,6 +8,7 @@
 
 #include <isccfg/grammar.h>
 #include <isccfg/namedconf.h>
+#include <isc/util.h>
 
 #include <util.h>
 

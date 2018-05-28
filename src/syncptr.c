@@ -34,9 +34,8 @@
 /*
  * Event for asynchronous PTR record synchronization.
  */
-typedef struct sync_ptrev sync_ptrev_t;
-struct sync_ptrev {
-	ISC_EVENT_COMMON(sync_ptrev_t);
+typedef struct sync_ptrev {
+	ISC_EVENT_COMMON(struct sync_ptrev);
 	isc_mem_t *mctx;
 	char a_name_str[DNS_NAME_FORMATSIZE];
 	char ip_str[INET6_ADDRSTRLEN + 1];
@@ -45,7 +44,7 @@ struct sync_ptrev {
 	dns_zone_t *ptr_zone;
 	int mod_op;
 	dns_ttl_t ttl;
-};
+}sync_ptrev_t;
 
 static void ATTR_NONNULLS
 sync_ptr_handler(isc_task_t *task, isc_event_t *ev);

@@ -24,7 +24,10 @@
  * rdata1 -> rdata2 -> rdata3           rdata4 -> rdata5
  * next_rdatalist              ->       next_rdatalist  ...
  */
-typedef LIST(dns_rdatalist_t) ldapdb_rdatalist_t;
+
+//typedef LIST(dns_rdatalist_t) ldapdb_rdatalist_t;
+//changed here for GCC error: function definition declared ‘typedef
+typedef struct { dns_rdatalist_t *head, *tail; } ldapdb_rdatalist_t;
 
 typedef struct enum_txt_assoc {
 	int		value;
