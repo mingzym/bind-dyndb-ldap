@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2011-2013  bind-dyndb-ldap authors; see COPYING for license
+ * Copyright (C) 2011-2019  bind-dyndb-ldap authors; see COPYING for license
  */
 
 #ifndef _LD_TYPES_H_
 #define _LD_TYPES_H_
 
+#include <isc/int.h>
 #include <isc/event.h>
 #include <isc/refcount.h>
 #include <dns/name.h>

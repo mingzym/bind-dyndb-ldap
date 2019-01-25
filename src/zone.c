@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2014-2015  bind-dyndb-ldap authors; see COPYING for license
+ * Copyright (C) 2014-2019  bind-dyndb-ldap authors; see COPYING for license
  */
 
+#include <isc/int.h>
 #include <isc/types.h>
 #include <isc/util.h>
 
